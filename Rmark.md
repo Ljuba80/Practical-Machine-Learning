@@ -3,7 +3,8 @@ ljuba80
 ###Syllabus
 This report is part of course project in Practical Machine Learning.Data was divided in two parts - Training(70%) and test data (30%). Because of performance
 issues, random forest training function applied. No crossvalidation is needed in 
-this case because it is performed internally. We are expecting overall accuracy above 95%
+this case because it is performed internally. We are expecting overall accuracy above 95%. Please note that first seven variables can (and will) be ommited. Also additional variables can be ommited (NA in test data for the second part of assignment) - resulting in ~50 features in total
+
 ###Data Processing
 First we load data
 
@@ -66,7 +67,7 @@ for(i in names(testData))
 }
 ```
 
-Now we partition our (train) dataset in two parts (trained and test part).Also, first seven variables are removed from training set.j
+Now we partition our (train) dataset in two parts (trained and test part).Also, first seven variables, as well as variables stated as NA's in 20 test data are removed from training set .
 
 ```r
 library(caret)
@@ -103,7 +104,8 @@ set.seed(32323)
 inTrain <- createDataPartition(y = trainData$classe, p = 0.7, list = FALSE)
 training <- trainData[inTrain, ]
 testing <- trainData[-inTrain, ]
-p <- training[, -1:-7]
+excludedData=c(1:7,12:36,50:59, 69:83,87:101,103:112,125:139,141:150)
+p <- training[, -excludedData]
 model.treebag <- randomForest(classe ~ ., data = p,ntree=500)
 result2 <- predict(model.treebag, newdata = testing)
 confusionMatrix(result2, testing$classe)
@@ -114,31 +116,31 @@ confusionMatrix(result2, testing$classe)
 ## 
 ##           Reference
 ## Prediction    A    B    C    D    E
-##          A 1671    7    0    0    0
-##          B    3 1127    6    0    0
-##          C    0    5 1019   10    0
-##          D    0    0    1  954    1
+##          A 1671    4    0    0    0
+##          B    3 1130    6    0    0
+##          C    0    5 1019    8    0
+##          D    0    0    1  956    1
 ##          E    0    0    0    0 1081
 ## 
 ## Overall Statistics
 ##                                         
-##                Accuracy : 0.994         
-##                  95% CI : (0.992, 0.996)
+##                Accuracy : 0.995         
+##                  95% CI : (0.993, 0.997)
 ##     No Information Rate : 0.284         
 ##     P-Value [Acc > NIR] : <2e-16        
 ##                                         
-##                   Kappa : 0.993         
+##                   Kappa : 0.994         
 ##  Mcnemar's Test P-Value : NA            
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: A Class: B Class: C Class: D Class: E
-## Sensitivity             0.998    0.989    0.993    0.990    0.999
-## Specificity             0.998    0.998    0.997    1.000    1.000
-## Pos Pred Value          0.996    0.992    0.985    0.998    1.000
-## Neg Pred Value          0.999    0.997    0.999    0.998    1.000
+## Sensitivity             0.998    0.992    0.993    0.992    0.999
+## Specificity             0.999    0.998    0.997    1.000    1.000
+## Pos Pred Value          0.998    0.992    0.987    0.998    1.000
+## Neg Pred Value          0.999    0.998    0.999    0.998    1.000
 ## Prevalence              0.284    0.194    0.174    0.164    0.184
 ## Detection Rate          0.284    0.192    0.173    0.162    0.184
-## Detection Prevalence    0.285    0.193    0.176    0.162    0.184
-## Balanced Accuracy       0.998    0.994    0.995    0.995    1.000
+## Detection Prevalence    0.285    0.194    0.175    0.163    0.184
+## Balanced Accuracy       0.999    0.995    0.995    0.996    1.000
 ```
